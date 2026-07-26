@@ -42,13 +42,13 @@ def extract_command(message: str) -> Optional[str]:
 @router.post("/chat", response_model=ChatResponse)  
 async def chat(request: ChatRequest):  
     """
-    Process a chat message and return an AI-generated response or terminal command result.
+    Process a chat message using the language model or an enabled terminal tool.
     
-    Terminal commands are executed when enabled and when the message contains a supported
-    command pattern; otherwise, the message is sent to the language model.
+    Args:
+        request (ChatRequest): Chat request containing the message, conversation, and tool settings.
     
     Returns:
-        ChatResponse: The conversation response, including any terminal tool invocation.
+        ChatResponse: The generated response or formatted terminal command result.
     
     Raises:
         HTTPException: If message processing or response generation fails.
@@ -142,10 +142,10 @@ async def new_conversation(conversation_id: str):
     Create a new conversation with a generated identifier.
     
     Parameters:
-        conversation_id (str): Existing conversation identifier accepted by the endpoint.
+        conversation_id (str): Conversation identifier from the request path.
     
     Returns:
-        dict: The generated conversation identifier and creation status.
+        dict: The generated conversation identifier and a creation status.
     """  
     try:  
         conv_id = str(uuid.uuid4())  
