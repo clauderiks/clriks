@@ -7,6 +7,9 @@ const headings = [
 ];
 
 
+/**
+ * Renders a table of contents linking to the page's documentation sections.
+ */
 export default function DocsTOC(){
 
 return (

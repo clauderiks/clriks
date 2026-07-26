@@ -18,7 +18,15 @@ risk_planner = RiskPlanner()
   
   
 def extract_command(message: str) -> Optional[str]:  
-    """Phat hien lenh shell trong tin nhan chat."""  
+    """
+    Extracts a shell command from a chat message.
+    
+    Parameters:
+    	message (str): The chat message containing a fenced Bash or shell command, or a command prefixed with `!`.
+    
+    Returns:
+    	str or None: The extracted command, or `None` when the message contains no supported command format.
+    """  
     text = message.strip()  
   
     fence = re.search(r"```(?:bash|sh)\s*\n(.*?)```", text, re.DOTALL)  
@@ -33,7 +41,18 @@ def extract_command(message: str) -> Optional[str]:
   
 @router.post("/chat", response_model=ChatResponse)  
 async def chat(request: ChatRequest):  
-    """Main chat endpoint - send message and get AI response"""  
+    """
+    Process a chat message and return an AI-generated response or terminal command result.
+    
+    Terminal commands are executed when enabled and when the message contains a supported
+    command pattern; otherwise, the message is sent to the language model.
+    
+    Returns:
+        ChatResponse: The conversation response, including any terminal tool invocation.
+    
+    Raises:
+        HTTPException: If message processing or response generation fails.
+    """  
     try:  
         memory.create_conversation(request.conversation_id, title=None)  
         memory.add_message(request.conversation_id, "user", request.message)  
@@ -99,7 +118,15 @@ Be concise and helpful."""
   
 @router.get("/chat/{conversation_id}")  
 async def get_conversation(conversation_id: str):  
-    """Get conversation history"""  
+    """
+    Retrieve the messages for a conversation.
+    
+    Parameters:
+        conversation_id (str): Identifier of the conversation.
+    
+    Returns:
+        dict: An object containing the conversation identifier and its messages.
+    """  
     try:  
         messages = memory.get_messages(conversation_id)  
         return {  
@@ -111,7 +138,15 @@ async def get_conversation(conversation_id: str):
   
 @router.post("/chat/{conversation_id}/new")  
 async def new_conversation(conversation_id: str):  
-    """Create a new conversation"""  
+    """
+    Create a new conversation with a generated identifier.
+    
+    Parameters:
+        conversation_id (str): Existing conversation identifier accepted by the endpoint.
+    
+    Returns:
+        dict: The generated conversation identifier and creation status.
+    """  
     try:  
         conv_id = str(uuid.uuid4())  
         memory.create_conversation(conv_id)  
@@ -121,7 +156,15 @@ async def new_conversation(conversation_id: str):
   
 @router.post("/tools/file/read")  
 async def file_read(path: str):  
-    """Read file contents"""  
+    """
+    Read the contents of a file.
+    
+    Parameters:
+        path (str): Path to the file to read.
+    
+    Returns:
+        The file-reading result.
+    """  
     try:  
         result = FileTools.read_file(path)  
         return result  
@@ -130,7 +173,13 @@ async def file_read(path: str):
   
 @router.post("/tools/file/write")  
 async def file_write(path: str, content: str):  
-    """Write to file"""  
+    """
+    Write content to a file at the specified path.
+    
+    Parameters:
+        path (str): Destination file path.
+        content (str): Content to write.
+    """  
     try:  
         result = FileTools.write_file(path, content)  
         return result  
@@ -139,7 +188,16 @@ async def file_write(path: str, content: str):
   
 @router.post("/tools/terminal/execute")  
 async def terminal_execute(command: str, timeout: int = 30, sandbox: bool = True):  
-    """Execute terminal command"""  
+    """Execute a terminal command with the specified timeout and sandbox setting.
+    
+    Parameters:
+        command (str): The terminal command to execute.
+        timeout (int): Maximum execution time in seconds.
+        sandbox (bool): Whether to run the command in a sandbox.
+    
+    Returns:
+        The terminal command execution result.
+    """  
     try:  
         result = TerminalTools.execute_command(command, timeout, sandbox)  
         return result  
@@ -148,7 +206,16 @@ async def terminal_execute(command: str, timeout: int = 30, sandbox: bool = True
   
 @router.get("/tools/github/repo")  
 async def github_get_repo(owner: str, repo: str):  
-    """Get GitHub repository info"""  
+    """
+    Retrieve information about a GitHub repository.
+    
+    Parameters:
+        owner (str): GitHub repository owner.
+        repo (str): GitHub repository name.
+    
+    Returns:
+        The repository information.
+    """  
     try:  
         result = github_tools.get_repo(owner, repo)  
         return result  
@@ -157,7 +224,20 @@ async def github_get_repo(owner: str, repo: str):
   
 @router.get("/tools/github/issues")  
 async def github_list_issues(owner: str, repo: str, state: str = "open"):  
-    """List GitHub issues"""  
+    """
+    List issues for a GitHub repository.
+    
+    Parameters:
+        owner (str): GitHub repository owner.
+        repo (str): Repository name.
+        state (str): Issue state to list, such as ``"open"`` or ``"closed"``.
+    
+    Returns:
+        The issues returned by GitHub.
+    
+    Raises:
+        HTTPException: If the GitHub request fails.
+    """  
     try:  
         result = github_tools.list_issues(owner, repo, state)  
         return result  
@@ -166,7 +246,16 @@ async def github_list_issues(owner: str, repo: str, state: str = "open"):
   
 @router.post("/agent/plan")  
 async def agent_plan(task: str, context: Optional[str] = None):  
-    """Get agent plan for a task"""  
+    """
+    Generate an execution plan for a task.
+    
+    Parameters:
+        task (str): Task for which to generate a plan.
+        context (Optional[str]): Additional context to consider when planning.
+    
+    Returns:
+        dict: The generated plan represented as a dictionary.
+    """  
     try:  
         plan = risk_agent.plan(task, context)  
         return plan.dict()  
@@ -175,7 +264,15 @@ async def agent_plan(task: str, context: Optional[str] = None):
   
 @router.post("/coder/analyze")  
 async def coder_analyze(code: str, language: str = "python"):  
-    """Analyze code"""  
+    """Analyze source code in the specified programming language.
+    
+    Parameters:
+        code (str): Source code to analyze.
+        language (str): Programming language of the source code.
+    
+    Returns:
+        The code analysis result.
+    """  
     try:  
         result = risk_coder.analyze_code(code, language)  
         return result  
@@ -184,7 +281,15 @@ async def coder_analyze(code: str, language: str = "python"):
   
 @router.post("/coder/generate")  
 async def coder_generate(description: str, language: str = "python"):  
-    """Generate code from description"""  
+    """Generate code based on a natural-language description.
+    
+    Parameters:
+        description (str): Description of the code to generate.
+        language (str): Programming language for the generated code.
+    
+    Returns:
+        The generated code result.
+    """  
     try:  
         result = risk_coder.generate_code(description, language)  
         return result  
@@ -193,7 +298,16 @@ async def coder_generate(description: str, language: str = "python"):
   
 @router.post("/planner/decompose")  
 async def planner_decompose(task: str, context: Optional[str] = None):  
-    """Decompose task into subtasks"""  
+    """
+    Decompose a task into actionable subtasks.
+    
+    Parameters:
+    	task (str): The task to decompose.
+    	context (Optional[str]): Additional context for task decomposition.
+    
+    Returns:
+    	The resulting task decomposition.
+    """  
     try:  
         result = risk_planner.decompose_task(task, context)  
         return result  
@@ -202,7 +316,11 @@ async def planner_decompose(task: str, context: Optional[str] = None):
   
 @router.get("/health")  
 async def health_check():  
-    """Health check endpoint"""  
+    """Report the service health status and LLM connection details.
+    
+    Returns:
+        dict: A health payload containing the status, timestamp, LLM model, and Ollama URL.
+    """  
     return {  
         "status": "healthy",  
         "timestamp": datetime.now().isoformat(),  
