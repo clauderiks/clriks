@@ -3,6 +3,9 @@ import DocsHeader from "@/components/docs/DocsHeader";
 import DocsTOC from "@/components/docs/DocsTOC";
 
 
+/**
+ * Renders the documentation page layout with header, navigation sidebar, content area, and table of contents.
+ */
 export default function DocsLayout({
  children,
 }: {

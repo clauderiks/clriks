@@ -1,3 +1,6 @@
+/**
+ * Renders the SandboxCode application header with navigation and status labels.
+ */
 export default function Header() {
   return (
     <header style={{

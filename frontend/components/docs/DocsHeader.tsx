@@ -2,6 +2,9 @@
 
 import { Search, Github, Moon } from "lucide-react";
 
+/**
+ * Renders the documentation header with a search field and theme and GitHub controls.
+ */
 export default function DocsHeader(){
 
 return (

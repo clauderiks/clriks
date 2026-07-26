@@ -2,6 +2,12 @@ import MarkdownViewer from "@/components/docs/MarkdownViewer";
 import fs from "fs";
 import path from "path";
 
+/**
+ * Renders the Markdown document identified by the route slug.
+ *
+ * @param params - Route parameters containing the document slug.
+ * @returns The rendered Markdown document.
+ */
 export default async function DocsPage({
   params,
 }: {
