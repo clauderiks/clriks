@@ -1,3 +1,6 @@
+/**
+ * Renders the application's static navigation sidebar.
+ */
 export default function Sidebar() {
   return (
     <aside style={{

@@ -36,6 +36,11 @@ const menus = [
   }
 ];
 
+/**
+ * Renders the documentation sidebar with grouped navigation links.
+ *
+ * @returns The sidebar markup for the documentation navigation.
+ */
 export default function DocsSidebar() {
   return (
     <aside className="w-72 min-h-screen border-r border-zinc-800 bg-[#050915] p-6">

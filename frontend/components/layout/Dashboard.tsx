@@ -1,6 +1,9 @@
 import Sidebar from "../sidebar/Sidebar";
 import Header from "../header/Header";
 
+/**
+ * Renders the dashboard layout with a sidebar, header, and centered IDE content area.
+ */
 export default function Dashboard() {
   return (
     <div style={{
