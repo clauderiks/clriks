@@ -10,10 +10,15 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "next": "15.5.18",
+    "axios": "^1.6.0",
+    "lucide-react": "^1.26.0",
+    "next": "15.5.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
-    "axios": "^1.6.0"
+    "react-markdown": "^10.1.0",
+    "rehype-autolink-headings": "^7.1.0",
+    "rehype-slug": "^6.0.0",
+    "remark-gfm": "^4.0.1"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
