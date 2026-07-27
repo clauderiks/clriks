@@ -42,16 +42,15 @@ def extract_command(message: str) -> Optional[str]:
 @router.post("/chat", response_model=ChatResponse)  
 async def chat(request: ChatRequest):  
     """
-    Process a chat message and return an AI-generated response or terminal command result.
+    Process a chat message using the language model or an optionally enabled terminal tool.
     
-    Terminal commands are executed when enabled and when the message contains a supported
-    command pattern; otherwise, the message is sent to the language model.
+    Terminal commands are executed when tool use is enabled and the message contains a supported command pattern. Otherwise, the message is sent to the language model.
     
     Returns:
-        ChatResponse: The conversation response, including any terminal tool invocation.
+        ChatResponse: The assistant response and any terminal tool invocation details.
     
     Raises:
-        HTTPException: If message processing or response generation fails.
+        HTTPException: If processing or response generation fails.
     """  
     try:  
         memory.create_conversation(request.conversation_id, title=None)  
@@ -139,13 +138,13 @@ async def get_conversation(conversation_id: str):
 @router.post("/chat/{conversation_id}/new")  
 async def new_conversation(conversation_id: str):  
     """
-    Create a new conversation with a generated identifier.
+    Create a conversation with a newly generated identifier.
     
     Parameters:
-        conversation_id (str): Existing conversation identifier accepted by the endpoint.
+        conversation_id (str): Conversation identifier provided in the request path; it is not used.
     
     Returns:
-        dict: The generated conversation identifier and creation status.
+        dict: The generated conversation identifier and a creation status.
     """  
     try:  
         conv_id = str(uuid.uuid4())  
@@ -157,13 +156,16 @@ async def new_conversation(conversation_id: str):
 @router.post("/tools/file/read")  
 async def file_read(path: str):  
     """
-    Read the contents of a file.
+    Read a file from the specified path.
     
     Parameters:
         path (str): Path to the file to read.
     
     Returns:
         The file-reading result.
+    
+    Raises:
+        HTTPException: If the file cannot be read.
     """  
     try:  
         result = FileTools.read_file(path)  
