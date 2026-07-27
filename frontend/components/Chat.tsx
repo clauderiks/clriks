@@ -17,7 +17,7 @@ interface Message {
 }  
   
 /**
- * Renders a chat interface for sending messages and displaying assistant responses, including tool-call output.
+ * Renders a chat interface for sending messages, displaying assistant responses, and showing tool-call output.
  */
 export default function Chat() {  
   const [messages, setMessages] = useState<Message[]>([])  
