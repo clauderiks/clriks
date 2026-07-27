@@ -199,12 +199,12 @@ async def terminal_execute(command: str, timeout: int = 30, sandbox: bool = True
     
     Returns:
         The terminal command execution result.
-    fence = re.search(r"```(?:bash|sh)\s*\r?\n(.*?)```", text, re.DOTALL)  
-    try:  
-        result = TerminalTools.execute_command(command, timeout, sandbox)  
-        return result  
-    except Exception as e:  
-        raise HTTPException(status_code=500, detail=str(e))  
+    """
+    try:
+        result = TerminalTools.execute_command(command, timeout, sandbox)
+        return result
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
   
 @router.get("/tools/github/repo")  
 async def github_get_repo(owner: str, repo: str):  
