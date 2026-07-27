@@ -1,12 +1,8 @@
-'use client'
+import Dashboard from "@/components/layout/Dashboard";
 
-import { useState, useRef, useEffect } from 'react'
-import Chat from '@/components/Chat'
-
+/**
+ * Renders the home page dashboard.
+ */
 export default function Home() {
-  return (
-    <main>
-      <Chat />
-    </main>
-  )
+  return <Dashboard />;
 }

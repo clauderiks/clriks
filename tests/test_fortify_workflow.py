@@ -125,8 +125,14 @@ class TestTriggers:
         assert len(triggers["schedule"]) == 1
 
     def test_schedule_cron_expression_is_well_formed(self, triggers):
+        """
+        Validate that the workflow schedule uses the expected well-formed cron expression.
+        
+        Parameters:
+        	triggers (dict): Parsed workflow trigger configuration.
+        """
         cron_expr = triggers["schedule"][0]["cron"]
-        assert cron_expr == "27 19 * * 2"
+        assert cron_expr == "45 1 * * 2"
         fields = cron_expr.split()
         assert len(fields) == 5, "Cron expression must have 5 fields"
         minute, hour, dom, month, dow = fields
