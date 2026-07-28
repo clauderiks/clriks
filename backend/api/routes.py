@@ -29,7 +29,7 @@ def extract_command(message: str) -> Optional[str]:
     """  
     text = message.strip()  
   
-    fence = re.search(r"```(?:bash|sh)\s*\n(.*?)```", text, re.DOTALL)  
+    fence = re.search(r"```(?:bash|sh)\s*\r?\n(.*?)```", text, re.DOTALL)  
     if fence:  
         return fence.group(1).strip()  
   
