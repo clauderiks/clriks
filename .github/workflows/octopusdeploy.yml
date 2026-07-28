@@ -32,7 +32,7 @@ name: 'Build and Deploy to Octopus Deploy'
 on:
   push:
     branches:
-      - '"main"'
+      - 'main'
 
 jobs:
   build:
