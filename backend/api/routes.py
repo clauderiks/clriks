@@ -19,7 +19,7 @@ risk_planner = RiskPlanner()
 
 
 def handle_errors(func):
-    """Wrap an endpoint so unhandled exceptions become a 500 HTTPException."""
+    """Convert unexpected exceptions raised by a route handler into a 500 HTTPException."""
 
     @wraps(func)
     async def wrapper(*args, **kwargs):
@@ -48,6 +48,7 @@ def extract_command(message: str) -> Optional[str]:
 
 
 def _chat_response(conversation_id: str, message: str, tool_calls: Optional[list] = None) -> ChatResponse:
+    """Build a ChatResponse and persist the assistant reply to memory."""
     memory.add_message(conversation_id, "assistant", message)
     return ChatResponse(
         conversation_id=conversation_id,
@@ -55,28 +56,6 @@ def _chat_response(conversation_id: str, message: str, tool_calls: Optional[list
         tool_calls=tool_calls or [],
         timestamp=datetime.now(),
         model=ollama_client.model,
-    )
-
-
-def _run_terminal_command(conversation_id: str, command: str) -> ChatResponse:
-    if not settings.enable_terminal_tool:
-        denied = (
-            "Terminal tool dang bi tat. Dat ENABLE_TERMINAL_TOOL=true "
-            "trong backend/.env de cho phep chay lenh."
-        )
-        return _chat_response(conversation_id, denied)
-
-    result = TerminalTools.execute_command(command, timeout=30, sandbox=True)
-    output = (
-        f"$ {command}\n"
-        f"[exit code: {result['returncode']}]\n\n"
-        f"--- stdout ---\n{result['stdout']}\n"
-        f"--- stderr ---\n{result['stderr']}"
-    )
-    return _chat_response(
-        conversation_id,
-        output,
-        tool_calls=[{"tool": "terminal", "command": command, "result": result}],
     )
 
 
@@ -90,7 +69,22 @@ async def chat(request: ChatRequest):
     if request.use_tools:
         command = extract_command(request.message)
         if command:
-            return _run_terminal_command(request.conversation_id, command)
+            if not settings.enable_terminal_tool:
+                denied = (
+                    "Terminal tool dang bi tat. Dat ENABLE_TERMINAL_TOOL=true "
+                    "trong backend/.env de cho phep chay lenh."
+                )
+                return _chat_response(request.conversation_id, denied)
+
+            result = TerminalTools.execute_command(command, timeout=30, sandbox=True)
+            output = (
+                f"$ {command}\n"
+                f"[exit code: {result['returncode']}]\n\n"
+                f"--- stdout ---\n{result['stdout']}\n"
+                f"--- stderr ---\n{result['stderr']}"
+            )
+            tool_calls = [{"tool": "terminal", "command": command, "result": result}]
+            return _chat_response(request.conversation_id, output, tool_calls)
 
     system_prompt = request.system_prompt or """You are Risk AI, a helpful coding assistant inspired by GitHub Copilot and OpenAI's Codex.
 You can read code, write code, execute commands, and interact with GitHub.
@@ -107,6 +101,7 @@ Be concise and helpful."""
         raise HTTPException(status_code=500, detail=response["error"])
 
     return _chat_response(request.conversation_id, response["content"])
+
 
 @router.get("/chat/{conversation_id}")
 @handle_errors
