@@ -8,16 +8,17 @@ const SLUG_PATTERN = /^[a-z0-9-]+$/i;
 export default async function DocsPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  if (!SLUG_PATTERN.test(params.slug)) {
+  const { slug } = await params;
+  if (!SLUG_PATTERN.test(slug)) {
     notFound();
   }
 
   const filePath = path.join(
     process.cwd(),
     "docs",
-    `${params.slug}.md`
+    `${slug}.md`
   );
 
   let content: string;
