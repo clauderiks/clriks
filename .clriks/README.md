@@ -1,5 +1,3 @@
-<h3>PR Summary by Qodo</h3>
-
 Add terminal tool chat command support, docs site, and IDE dashboard UI
 
 <code>✨ Enhancement</code> <code>📝 Documentation</code> <code>🕐 20-40 Minutes</code>
