@@ -199,7 +199,7 @@ async def terminal_execute(command: str, timeout: int = 30, sandbox: bool = True
     
     Returns:
         The terminal command execution result.
-    """  
+    fence = re.search(r"```(?:bash|sh)[ \t]*\r?\n(.*?)```", text, re.DOTALL)  
     try:  
         result = TerminalTools.execute_command(command, timeout, sandbox)  
         return result  
