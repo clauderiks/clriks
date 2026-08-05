@@ -95,7 +95,8 @@ export default function Chat() {
           </div>  
         )}  
         {messages.map((msg, idx) => (  
-          <div key={idx} className={`message ${msg.role}`}>  
+        {messages.map((msg) => (
+          <div key={msg.timestamp} className={`message ${msg.role}`}>
             <p>{msg.content}</p>  
             {msg.toolCalls && msg.toolCalls.length > 0 && (  
               <div className="tool-calls">  
