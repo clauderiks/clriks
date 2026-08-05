@@ -13,6 +13,7 @@ class Settings(BaseSettings):
     allowed_origins: list[str] = Field(default=["http://localhost:3000"], alias="ALLOWED_ORIGINS")
     ollama_url: str = Field(default="http://localhost:11434", alias="OLLAMA_URL")
     ollama_model: str = Field(default="llama3.1", alias="OLLAMA_MODEL")
+    enable_terminal_tool: bool = Field(default=False, alias="ENABLE_TERMINAL_TOOL")
 
 
 settings = Settings()
