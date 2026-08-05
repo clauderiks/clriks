@@ -6,7 +6,17 @@ import axios from 'axios'
 interface ToolCall {  
   tool: string  
   command?: string  
-  result?: any  
+interface ToolCallResult {
+  returncode: number;
+  stdout: string;
+  stderr: string;
+}
+
+interface ToolCall {
+  tool: string;
+  command?: string;
+  result?: ToolCallResult;
+}
 }  
   
 interface Message {  
